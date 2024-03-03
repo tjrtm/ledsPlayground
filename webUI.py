@@ -22,6 +22,10 @@ pixels = neopixel.NeoPixel(PIXEL_PIN, NUM_PIXELS, brightness=BRIGHTNESS, auto_wr
 # Initialize LED buffer
 LED_BUFFER = [(0, 0, 0) for _ in range(NUM_PIXELS)]
 
+# Function to set brightness
+def set_brightness(brightness_level):
+    pixels.brightness = brightness_level
+
 # Function to set an individual LED color
 def led_on(led_id, color=WHITE, clear=True):
     if 0 <= led_id < NUM_PIXELS:
@@ -32,7 +36,6 @@ def led_off(led_id, color=BLACK, clear=True):
         pixels[led_id] = color
 
 def on(color=WHITE):
-    # Use the fill() method to set all pixels to the specified color
     pixels.fill(color)
 
 def off():
@@ -79,38 +82,31 @@ newattr = termios.tcgetattr(fd)
 newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO  # Configure for raw input
 termios.tcsetattr(fd, termios.TCSANOW, newattr)
 
-# ###################################################################################
-# try:
-#     while True:
-#         try:
-#             display_letter(os.read(fd, 1).decode('utf-8'))
-#         except OSError:
-#             pass 
-# finally:
-#     termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)  # Restore terminal settings#
-# ####################################################################################
+@app.route('/leds/brightness/<float:brightness>', methods=['GET'])
+def api_set_brightness(brightness):
+    # Ensure the brightness level is within the valid range
+    if 0.0 <= brightness <= 1.0:
+        set_brightness(brightness)
+        return jsonify({"message": f"Brightness set to {brightness}"}), 200
+    else:
+        return jsonify({"error": "Brightness level must be between 0.0 and 1.0"}), 400
 
-
-@app.route('/led/on', methods=['POST'])
-def turn_led_on():
-    data = request.get_json()
-    led_id = data.get('led_id')
-    color = data.get('color', (255, 255, 255))  # Default to white if not specified
-    led_on(led_id, color)
+@app.route('/led/on/<int:led_id>/<color>', methods=['GET'])
+def turn_led_on(led_id, color):
+    # Convert color from '255,255,255' string to (255, 255, 255) tuple
+    color_tuple = tuple(map(int, color.split(',')))
+    led_on(led_id, color_tuple)
     return jsonify({"message": f"LED {led_id} turned on with color {color}"}), 200
 
-@app.route('/led/off', methods=['POST'])
-def turn_led_off():
-    data = request.get_json()
-    led_id = data.get('led_id')
+@app.route('/led/off/<int:led_id>', methods=['GET'])
+def turn_led_off(led_id):
     led_off(led_id)
     return jsonify({"message": f"LED {led_id} turned off"}), 200
 
-@app.route('/leds/on', methods=['POST'])
-def turn_all_leds_on():
-    data = request.get_json()
-    color = data.get('color', (255, 255, 255))  # Default to white if not specified
-    on(color)
+@app.route('/leds/on/<color>', methods=['GET'])
+def turn_all_leds_on(color):
+    color_tuple = tuple(map(int, color.split(',')))
+    on(color_tuple)
     return jsonify({"message": "All LEDs turned on"}), 200
 
 @app.route('/leds/off', methods=['GET'])
@@ -118,22 +114,24 @@ def turn_all_leds_off():
     off()
     return jsonify({"message": "All LEDs turned off"}), 200
 
-@app.route('/led/display_letter', methods=['POST'])
-def api_display_letter():
-    data = request.get_json()
-    character = data.get('character')
-    color = data.get('color', (255, 255, 255))  # Default to white if not specified
-    display_letter(character, color)
+@app.route('/led/display_letter/<character>/<color>', methods=['GET'])
+# /led/display_letter/a/255,255,255
+def api_display_letter(character, color):
+    color_tuple = tuple(map(int, color.split(',')))
+    display_letter(character, color_tuple)
     return jsonify({"message": f"Displayed letter {character}"}), 200
 
-@app.route('/led/display_sentence', methods=['POST'])
+@app.route('/led/display_sentence', methods=['GET'])
 def api_display_sentence():
-    data = request.get_json()
-    sentence = data.get('sentence')
-    color = data.get('color', (255, 255, 0))  # Default to yellow if not specified
-    delay = data.get('delay', 0.05)
-    display_sentence(sentence, color, delay)
+    sentence = request.args.get('sentence')
+    color = request.args.get('color', '255,255,0')  # Default to yellow if not specified
+    delay = float(request.args.get('delay', 0.05))
+    color_tuple = tuple(map(int, color.split(',')))
+    display_sentence(sentence, color_tuple, delay)
     return jsonify({"message": f"Displayed sentence: {sentence}"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
+
+
+
