@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LED Matrix Display</title>
+<style>
+  .matrix-container {
+    display: grid;
+    grid-template-columns: repeat(7, 30px);
+    gap: 4px;
+    justify-content: center;
+    padding: 20px;
+    column-gap: 20px;
+  }
+  .led {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: #000;
+    background-color: #fff;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="matrix-container">
+  <!-- JavaScript will dynamically insert LED divs here -->
+</div>
+
+<script>
+    const matrixContainer = document.querySelector('.matrix-container');
+    const ledMatrix = [
+      [78, 77, 76, 75, 74, 73, 72],
+      [64, 65, 66, 67, 68, 69, 70],
+      [62, 61, 60, 59, 58, 57, 56],
+      [48, 49, 50, 51, 52, 53, 54],
+      [46, 45, 44, 43, 42, 41, 40],
+      [32, 33, 34, 35, 36, 37, 38],
+      [30, 29, 28, 27, 26, 25, 24],
+      [16, 17, 18, 19, 20, 21, 22],
+      [14, 13, 12, 11, 10, 9, 8],
+      [0, 1, 2, 3, 4, 5, 6]
+    ];
+  
+    ledMatrix.forEach(row => {
+      row.forEach(led => {
+        const ledDiv = document.createElement('div');
+        ledDiv.className = 'led';
+        ledDiv.id = `led-${led}`;
+        ledDiv.textContent = led;
+        // Mouseover Event: Turn LED On
+        ledDiv.addEventListener('mouseover', () => {
+          const urlOn = `http://192.168.0.222:8080/led/on/${led}/255,255,255`;
+          fetch(urlOn).then(response => {
+            //console.log(`LED ${led} - Turned On`);
+          }).catch(error => {
+            console.error(`Error turning on LED ${led}:`, error);
+          });
+        });
+        // Mouseout Event: Turn LED Off
+        ledDiv.addEventListener('mouseout', () => {
+          const urlOff = `http://192.168.0.222:8080/led/off/${led}`;
+          fetch(urlOff).then(response => {
+            //console.log(`LED ${led} - Turned Off`);
+          }).catch(error => {
+            console.error(`Error turning off LED ${led}:`, error);
+          });
+        });
+        matrixContainer.appendChild(ledDiv);
+      });
+    });
+  </script>
+  
+
+</body>
+</html>

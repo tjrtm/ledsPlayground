@@ -1,0 +1,17 @@
+#leds {}
+.led {
+    max-width: 160px;
+    max-height: 96px;
+    display: block !important;
+    position: relative;
+    overflow: hidden;
+    background: green;
+    margin: 6px;
+    border-radius: 5px;
+    text-align: center;
+}
+.colors {}
+.pwr {}
+.red input#red {}
+.green input#green {}
+.blue input#blue {}

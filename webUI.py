@@ -3,6 +3,7 @@ import neopixel
 import time
 import termios, fcntl, sys, os
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 # Configuration
 NUM_PIXELS = 79
@@ -15,6 +16,9 @@ import led_mapping
 from led_mapping import led_matrix, char_mappings, abc, number_mappings
 
 app = Flask(__name__)
+
+CORS(app)
+
 
 # Initialize NeoPixel
 pixels = neopixel.NeoPixel(PIXEL_PIN, NUM_PIXELS, brightness=BRIGHTNESS, auto_write=AUTO_WRITE)
