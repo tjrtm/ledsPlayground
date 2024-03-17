@@ -22,7 +22,7 @@ logger.addHandler(console_handler)
 
 
 # LED Configuration
-LED_COUNT = 24
+LED_COUNT = 79
 OFF_COLOR = (0, 0, 0)  # Off
 BRIGHTNESS = 1
 

@@ -5,7 +5,7 @@ import termios, fcntl, sys, os
 from flask import Flask, request, jsonify
 
 # Configuration
-NUM_PIXELS = 70
+NUM_PIXELS = 79
 PIXEL_PIN = board.D18
 BRIGHTNESS = 0.01
 AUTO_WRITE = True
@@ -85,7 +85,7 @@ termios.tcsetattr(fd, termios.TCSANOW, newattr)
 @app.route('/leds/brightness/<float:brightness>', methods=['GET'])
 def api_set_brightness(brightness):
     # Ensure the brightness level is within the valid range
-    if 0.0 <= brightness <= 1.0:
+    if 0.0 <= brightness <= 0.9:
         set_brightness(brightness)
         return jsonify({"message": f"Brightness set to {brightness}"}), 200
     else:
@@ -129,6 +129,15 @@ def api_display_sentence():
     color_tuple = tuple(map(int, color.split(',')))
     display_sentence(sentence, color_tuple, delay)
     return jsonify({"message": f"Displayed sentence: {sentence}"}), 200
+
+@app.route('/leds/group/<led_ids>/<color>', methods=['GET'])
+def turn_group_leds_on(led_ids, color):
+    led_ids_list = list(map(int, led_ids.split(',')))
+    color_tuple = tuple(map(int, color.split(',')))
+    for led_id in led_ids_list:
+        led_on(led_id, color_tuple)
+    return jsonify({"message": f"LEDs {led_ids} turned on with color {color}"}), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
