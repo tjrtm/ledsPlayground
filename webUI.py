@@ -8,7 +8,7 @@ from flask_cors import CORS
 # Configuration
 NUM_PIXELS = 79
 PIXEL_PIN = board.D18
-BRIGHTNESS = 0.01
+BRIGHTNESS = 0.9
 AUTO_WRITE = True
 WHITE = (255,255,255)
 BLACK = (0,0,0)
@@ -25,6 +25,38 @@ pixels = neopixel.NeoPixel(PIXEL_PIN, NUM_PIXELS, brightness=BRIGHTNESS, auto_wr
 
 # Initialize LED buffer
 LED_BUFFER = [(0, 0, 0) for _ in range(NUM_PIXELS)]
+
+# Function to adjust brightness relative to current level
+def adjust_brightness(change):
+    # Get current brightness
+    current_brightness = pixels.brightness
+    print(current_brightness)
+    # Calculate new brightness level
+    new_brightness = max(0.0, min(1.0, current_brightness + change))
+    # Set new brightness, ensuring it stays within the 0.0 to 1.0 range
+    pixels.brightness = new_brightness
+    on()
+    print(f"Brightness adjusted to {new_brightness}")
+
+def rgb_to_brightness(rgb):
+    current_brightness = pixels.brightness
+    print(current_brightness)
+    max_value = max(rgb)  # Find the maximum value in the RGB tuple
+    # Map the max value from 10-255 range to 0.01-0.9 range
+    brightness = 0.01 + (max_value - 10) * (0.89 / (255 - 10))
+    return max(0.01, min(0.9, brightness))  # Ensure brightness is within bounds
+
+def adjust_brightness(change):
+    # Get current brightness
+    current_brightness = pixels.brightness
+    print(current_brightness)
+    # Calculate new brightness level and round to one decimal place
+    new_brightness = round(max(0.0, min(1.0, current_brightness + change)), 1)
+    # Set new brightness, ensuring it stays within the 0.0 to 1.0 range
+    pixels.brightness = new_brightness
+    on()
+    print(f"Brightness adjusted to {new_brightness}")
+
 
 # Function to set brightness
 def set_brightness(brightness_level):
@@ -94,6 +126,21 @@ def api_set_brightness(brightness):
         return jsonify({"message": f"Brightness set to {brightness}"}), 200
     else:
         return jsonify({"error": "Brightness level must be between 0.0 and 1.0"}), 400
+
+from flask import jsonify  # Make sure to import jsonify at the top of your file
+
+@app.route('/leds/brightness_by_rgb/<rgb>', methods=['GET'])
+def adjust_brightness_by_rgb(rgb):
+    # Convert the input string to an RGB tuple
+    rgb_tuple = tuple(map(int, rgb.split(',')))
+    # Calculate the corresponding brightness level
+    brightness = rgb_to_brightness(rgb_tuple)
+    # Set the new brightness
+    pixels.brightness = brightness
+    # Return a JSON response indicating success and the new brightness level
+    return jsonify({"success": True, "message": f"Brightness adjusted to {brightness:.2f} based on RGB {rgb}"}), 200
+
+ 
 
 @app.route('/led/on/<int:led_id>/<color>', methods=['GET'])
 def turn_led_on(led_id, color):
