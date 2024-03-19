@@ -199,7 +199,7 @@ int main() {
             } else if (strncmp(read_buf, "off", 3) == 0) {
                 off(&ledstrip);
             } else if (strncmp(read_buf, "fire", 4) == 0) {
-                fireplace_effect(&ledstrip, 300); // Run fireplace effect for 30 seconds
+                fireplace_effect(&ledstrip, 300); // Run fireplace effect for 300 seconds
             }
         }
         memset(&read_buf, '\0', sizeof(read_buf));
