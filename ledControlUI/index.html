@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LED Matrix Application</title>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        padding: 20px;
+        background-color: #f0f0f0;
+    }
+    h1, h2 {
+        color: #333;
+    }
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    input[type="number"], input[type="text"] {
+        padding: 8px;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: calc(100% - 22px);
+    }
+    button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    label {
+        display: block;
+        margin-top: 20px;
+    }    
+  /* Basic styling for tabs */
+  .tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+  }
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+  }
+  .tab button:hover {
+    background-color: #ddd;
+  }
+  .tab button.active {
+    background-color: #ccc;
+  }
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+  }
+  /* Add your existing styles here */
+  .matrix-container {
+    display: grid;
+    grid-template-columns: repeat(7, 30px);
+    gap: 4px;
+    justify-content: center;
+    padding: 20px;
+    column-gap: 20px;
+  }
+  .led {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: #000;
+    background-color: #fff;
+    cursor: pointer;
+  }  
+</style>
+</head>
+<body>
+
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'LEDMatrix')">LED Matrix</button>
+  <button class="tablinks" onclick="openTab(event, 'LEDControlPanel')">LED Control Panel</button>
+</div>
+
+<div id="LEDMatrix" class="tabcontent">
+  <div class="matrix-container">
+    <!-- JavaScript will dynamically insert LED divs here -->
+  </div>
+  
+  <script>
+      const matrixContainer = document.querySelector('.matrix-container');
+      const ledMatrix = [
+        [78, 77, 76, 75, 74, 73, 72],
+        [64, 65, 66, 67, 68, 69, 70],
+        [62, 61, 60, 59, 58, 57, 56],
+        [48, 49, 50, 51, 52, 53, 54],
+        [46, 45, 44, 43, 42, 41, 40],
+        [32, 33, 34, 35, 36, 37, 38],
+        [30, 29, 28, 27, 26, 25, 24],
+        [16, 17, 18, 19, 20, 21, 22],
+        [14, 13, 12, 11, 10, 9, 8],
+        [0, 1, 2, 3, 4, 5, 6]
+      ];
+    
+      ledMatrix.forEach(row => {
+          row.forEach(led => {
+              const ledDiv = document.createElement('div');
+              ledDiv.className = 'led';
+              ledDiv.id = `led-${led}`;
+              ledDiv.textContent = led;
+  
+              // Mouseover Event: Turn LED On with delay
+              ledDiv.addEventListener('mouseover', () => {
+              setTimeout(() => {
+                  const urlOn = `http://192.168.0.222:8080/led/on/${led}/255,255,255`;
+                  fetch(urlOn).catch(error => {
+                  console.error(`Error turning on LED ${led}:`, error);
+                  });
+              }, 1000);  // delay
+  
+              });
+  
+              // Mouseout Event: Turn LED Off
+              ledDiv.addEventListener('mouseout', () => {
+              setTimeout(() => {
+                  const urlOff = `http://192.168.0.222:8080/led/off/${led}`;
+                  fetch(urlOff).catch(error => {
+                  console.error(`Error turning off LED ${led}:`, error);
+                  });
+              }, 1000); // delay
+              });
+  
+              matrixContainer.appendChild(ledDiv);
+          });
+      });
+  
+    </script>
+</div>
+
+<div id="LEDControlPanel" class="tabcontent">
+  <h1>LED Control Panel</h1>
+  <div id="responseMessage"></div>
+  
+  <!-- <div class="container">
+      <h2>Brightness Control</h2>
+      <label>0,0 to 1,0: <input type="number" id="brightness"></label>
+      <button onclick="setBrightness()">Set brightness</button>
+  </div> -->
+  
+  <div class="container">
+      <h2>Single LED Control</h2>
+      <label>LED ID (On): <input type="number" id="ledIdOn"></label>
+      <label>Color (e.g., 255,255,255): <input type="text" id="colorOn"></label>
+      <button onclick="turnLedOn()">Turn LED On</button>
+  </div>
+  
+  <div class="container">
+      <label>LED ID (Off): <input type="number" id="ledIdOff"></label>
+      <button onclick="turnLedOff()">Turn LED Off</button>
+  </div>
+  
+  <div class="container">
+      <h2>All LEDs Control</h2>
+      <label>Color for All (e.g., 255,255,255): <input type="text" id="allColorOn"></label>
+      <button onclick="turnAllLedsOn()">Turn All LEDs On</button>
+  </div>
+  
+  <div class="container">
+      <button onclick="turnAllLedsOff()">Turn All LEDs Off</button>
+  </div>
+  
+  <div class="container">
+      <h2>Display</h2>
+      <label>Character: <input type="text" id="character"></label>
+      <label>Color (e.g., 255,255,255): <input type="text" id="letterColor"></label>
+      <button onclick="displayLetter()">Display Letter</button>
+  </div>
+  
+  <div class="container">
+      <label>Sentence: <input type="text" id="sentence"></label>
+      <label>Color (e.g., 255,255,255): <input type="text" id="sentenceColor"></label>
+      <label>Delay (seconds): <input type="number" step="0.01" id="delay"></label>
+      <button onclick="displaySentence()">Display Sentence</button>
+  </div>
+  <script>
+  
+  function turnLedOn() {
+      const ledId = document.getElementById('ledIdOn').value;
+      const color = document.getElementById('colorOn').value;
+      fetch(`http://192.168.0.222:8080/led/on/${ledId}/${color}`)
+          .then(response => response.json())
+          .then(data => displayMessage(data.message))
+          .catch(error => console.error('Error:', error));
+  }
+  
+  function turnLedOff() {
+      const ledId = document.getElementById('ledIdOff').value;
+      fetch(`http://192.168.0.222:8080/led/off/${ledId}`)
+          .then(response => response.json())
+          .then(data => displayMessage(data.message))
+          .catch(error => console.error('Error:', error));
+  }
+  
+  function turnAllLedsOn() {
+      const color = document.getElementById('allColorOn').value;
+      fetch(`http://192.168.0.222:8080/leds/on/${color}`)
+          .then(response => response.json())
+          .then(data => displayMessage(data.message))
+          .catch(error => console.error('Error:', error));
+  }
+  
+  function turnAllLedsOff() {
+      fetch('http://192.168.0.222:8080/leds/off')
+          .then(response => response.json())
+          .then(data => displayMessage(data.message))
+          .catch(error => console.error('Error:', error));
+  }
+  
+  function displayLetter() {
+      const character = document.getElementById('character').value;
+      const color = document.getElementById('letterColor').value;
+      fetch(`http://192.168.0.222:8080/led/display_letter/${character}/${color}`)
+          .then(response => response.json())
+          .then(data => displayMessage(data.message))
+          .catch(error => console.error('Error:', error));
+  }
+  
+  function displaySentence() {
+      const sentence = encodeURIComponent(document.getElementById('sentence').value);
+      const color = document.getElementById('sentenceColor').value;
+      const delay = document.getElementById('delay').value;
+      fetch(`http://192.168.0.222:8080/led/display_sentence?sentence=${sentence}&color=${color}&delay=${delay}`)
+          .then(response => response.json())
+          .then(data => displayMessage(data.message))
+          .catch(error => console.error('Error:', error));
+  }
+  
+  function displayMessage(message) {
+      document.getElementById('responseMessage').innerText = message;
+  }
+  
+  // Function to send a GET request
+  function sendGetRequest() {
+    const url = "http://192.168.0.222:8080/led/display_letter/a/155,255,125"; // Replace YOUR_URL_HERE with your target URL
+  
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json(); // or .text() if the response is not in JSON format || ERROR
+      })
+      .then(data => console.log(data))
+      .catch(error => console.error('There was a problem with your fetch operation:', error));
+  }
+  
+  let counter = 0; // Initialize counter
+  const maxRepeats = 3; // Maximum number of repeats
+  
+  // Function to be called at intervals
+  function intervalFunction() {
+    if (counter < maxRepeats) {
+      sendGetRequest();
+      counter++; // Increment the counter
+    } else {
+      clearInterval(intervalId); // Stop the interval after 5 repeats
+      console.log('Reached the maximum number of repeats.');
+    }
+  }
+  
+  // Set interval and keep its ID to stop it later
+  // const intervalId = setInterval(intervalFunction, 2000);
+  
+  
+      </script>
+</div>
+
+<script>
+function openTab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById("defaultOpen").click();
+});
+</script>
+</body>
+</html>
