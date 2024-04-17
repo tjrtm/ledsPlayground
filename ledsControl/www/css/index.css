@@ -1,0 +1,122 @@
+* {
+    color: white !important;
+}  
+body {
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+    background-color: #252525;
+}
+h1, h2 {
+    color: #333;
+}
+.container {
+    background: rgb(255 255 255 / 17%);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    width: 100%;
+}
+input[type="number"], input[type="text"] {
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: calc(100% - 22px);
+    background: gray;
+}
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+button:hover {
+    background-color: #0056b3;
+}
+label {
+    display: block;
+    margin-top: 20px;
+}    
+/* Basic styling for tabs */
+.tab {
+overflow: hidden;
+border: 1px solid #ccc;
+background-color: #2b8631;
+display: flex;
+flex-direction: row;
+flex-wrap: nowrap;
+justify-content: center;
+}
+.tab button {
+background-color: inherit;
+float: left;
+border: none;
+outline: none;
+cursor: pointer;
+padding: 14px 16px;
+transition: 0.3s;
+font-size: 17px;
+}
+.tab button:hover {
+background-color: #ffca0d;
+color: #4460ff;
+font-weight: 700;
+border-bottom-right-radius: 0;
+border-bottom-left-radius: 0;
+}
+.tab button.active {
+background-color: #ffca0d;
+color: #4460ff;
+font-weight: 700;
+border-bottom-right-radius: 0;
+border-bottom-left-radius: 0;
+}
+.tabcontent {
+display: none;
+padding: 6px 12px;
+border: 1px solid #ccc;
+border-top: none;
+}
+/* Add your existing styles here */
+.matrix-container {
+    display: grid;
+    grid-template-columns: repeat(7, 30px);
+    gap: 6px;
+    justify-content: center;
+    padding: 6px;
+    column-gap: 2px;
+}
+.led {
+    border-radius: 50%;
+    border: 2px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: #000 !important;
+    background-color: #fff;
+    cursor: pointer;
+    height: 26px;
+}  
+div#controls {
+    width: 8%;
+    margin-right: 10px;
+}  
+button#off {
+width: 100%;
+display: block;
+background: #880c00;
+padding: 2px;
+}  
+div#colorPicker {
+    width: 100%;
+    margin-top: 10px;
+    padding: 0;
+    border: 0 !important;
+    box-shadow: none!important;
+    display: block;
+}

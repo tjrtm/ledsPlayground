@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LED Matrix Application</title>
+<link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'LEDMatrix')">LED Matrix</button>
+  <button class="tablinks" onclick="openTab(event, 'LEDControlPanel')">LED Control Panel</button>
+</div>
+
+<div id="LEDMatrix" class="tabcontent">
+  <div id="controls" class="container">
+    <button id="off" onclick="turnAllLedsOff()">Off</button>
+    <input type="color" id="colorPicker" value="#ffffff" style="width: 100%; margin-top: 10px;">
+  </div>
+  <div class="matrix-container">
+    <!-- JavaScript will dynamically insert LED divs here -->
+  </div>
+</div>
+
+<div id="LEDControlPanel" class="tabcontent">
+  
+  <div id="responseMessage">
+
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col">
+          <h2>Single LED Control</h2>
+          <label>LED ID (On): <input type="number" id="ledIdOn"></label>
+          <label>Color (e.g., 255,255,255): <input type="text" id="colorOn"></label>
+          <button onclick="turnLedOn()">Turn LED On</button>
+      </div>
+
+      <div class="col">
+          <label>LED ID (Off): <input type="number" id="ledIdOff"></label>
+          <button onclick="turnLedOff()">Turn LED Off</button>
+      </div>
+
+      <div class="col">
+          <h2>All LEDs Control</h2>
+          <label>Color for All (e.g., 255,255,255): <input type="text" id="allColorOn"></label>
+          <button onclick="turnAllLedsOn()">Turn All LEDs On</button>
+      </div>
+
+      <div class="col">
+          <button onclick="turnAllLedsOff()">Turn All LEDs Off</button>
+      </div>
+
+      <div class="col">
+          <h2>Display</h2>
+          <label>Character: <input type="text" id="character"></label>
+          <label>Color (e.g., 255,255,255): <input type="text" id="letterColor"></label>
+          <button onclick="displayLetter()">Display Letter</button>
+      </div>
+
+      <div class="col">
+          <label>Sentence: <input type="text" id="sentence"></label>
+          <label>Color (e.g., 255,255,255): <input type="text" id="sentenceColor"></label>
+          <label>Delay (seconds): <input type="number" step="0.01" id="delay"></label>
+          <button onclick="displaySentence()">Display Sentence</button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script type="text/JavaScript" src="js/index.js"></script>
+
+</body>
+</html>
